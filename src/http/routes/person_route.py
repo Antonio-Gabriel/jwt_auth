@@ -12,12 +12,20 @@ def index():
     Returns:
         [json]: [persons]
     """
-    return jsonify({"data": "oi"})
-    # return jsonify({"status_code": 200, "data": "response"})
+
+    person_repository = PersonRepository(request_api=request)
+    response = person_repository.get_person()    
+
+    return jsonify({"status_code": 200, "data": response})
 
 
 @person_route_bp.route('/person/create', methods=['POST'])
 def create_person():
+    """Create person route
+
+    Returns:
+        [json]: [persons]
+    """
 
     person_repository = PersonRepository(request_api=request)
     response = person_repository.create_person()
