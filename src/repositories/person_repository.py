@@ -3,6 +3,7 @@ from flask import request
 from datetime import datetime
 
 from src.database import get_database_instance
+from src.helpers import SecretPassword
 
 
 class PersonRepository:
@@ -24,7 +25,11 @@ class PersonRepository:
 
         try:
             self.__cursor.execute(
-                save_person_query, (name, email, password, age))
+                save_person_query, (
+                    name, email,
+                    SecretPassword.password_encrypt(password), 
+                    age)
+                    )
             self.__connection.commit()
         except:
             return {}
@@ -36,7 +41,7 @@ class PersonRepository:
             "id": self.__cursor.lastrowid,
             "name": name,
             "email": email,
-            "password": password,
+            "password": SecretPassword.password_encrypt(password),
             "age": age,
             "output": {
                 "msg": "person created",
