@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 
-from src.repositories import PersonRepository
+from src.repositories import PersonRepository, auth_repository
+from src.repositories import AuthRepository
 
 person_route_bp = Blueprint('api_routes', __name__)
 
@@ -36,3 +37,12 @@ def create_person():
         }})
 
     return jsonify({"status_code": 200, "data": [response]})
+
+
+@person_route_bp.route('/auth/person', methods=['POST'])
+def auth():
+
+    auth_repository = AuthRepository(request_api=request)
+    auth_repository.auth_person()
+    
+    return jsonify({"secret_key": "app.config['SECRET_KEY']"})
