@@ -24,12 +24,14 @@ class PersonRepository:
         """
 
         try:
+            crypto_pass = SecretPassword.password_encrypt(password)
+
             self.__cursor.execute(
                 save_person_query, (
                     name, email,
-                    SecretPassword.password_encrypt(password), 
+                    crypto_pass,
                     age)
-                    )
+            )
             self.__connection.commit()
         except:
             return {}
@@ -41,7 +43,7 @@ class PersonRepository:
             "id": self.__cursor.lastrowid,
             "name": name,
             "email": email,
-            "password": SecretPassword.password_encrypt(password),
+            "password": str(crypto_pass),
             "age": age,
             "output": {
                 "msg": "person created",
@@ -69,7 +71,7 @@ class PersonRepository:
                 "id": person[0],
                 "name": person[1],
                 "email": person[2],
-                "password": person[3],
+                "password": str(person[3]),
                 "age": person[4],
             })
 
