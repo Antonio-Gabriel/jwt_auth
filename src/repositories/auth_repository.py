@@ -1,13 +1,14 @@
 from typing import Type
-from flask import request
+from datetime import datetime, timedelta
+from flask import request, jsonify
+
+import jwt
 
 from src.database import get_database_instance
-from src.helpers import SecretPassword
+from src.helpers import SecretPassword, SECRET_KEY
 
 
 class AuthRepository:
-
-    SECRET_KEY = "f5225ab1413c41a1a4649c8910e19d01"
 
     def __init__(self, request_api: Type[request]):
         self.__request_api = request_api
@@ -25,7 +26,7 @@ class AuthRepository:
         email, password = self.__request_api.json.values()
 
         query = """
-            select password from person p 
+            select password, name from person p 
             where p.email = ?;
         """
 
@@ -37,11 +38,32 @@ class AuthRepository:
         self.__connection.close()
 
         if result is None:
-            return { 
-                    "error": {
-                        "msg": "User not found"
-                    } 
+            return {
+                "error": {
+                    "msg": "User not found"
                 }
-        else:            
+            }
+        else:
             verify_pass = SecretPassword.password_verify(password, result[0])
-            print(verify_pass)
+
+            if verify_pass:
+                token = jwt.encode({
+                    "user": result[1],
+                    # Expiration token
+                    "expiration": str(datetime.utcnow() + timedelta(seconds=60))
+                }, SECRET_KEY)
+
+                # jwt.decode(token, SECRET_KEY, algorithms=["HS256"])                
+
+                return { "token": token }
+            else:
+                return {
+                        "error": {
+                        "message": 'Unable to verify',
+                        "status_code": 403,
+                        "headers": {
+                            'WWW-Authenticate': 
+                            'Basic realm: "Authentication Failed '
+                        }
+                    }
+                }
