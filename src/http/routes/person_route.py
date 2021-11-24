@@ -1,6 +1,6 @@
 from flask import request, jsonify, Blueprint
 
-from src.repositories import PersonRepository, auth_repository
+from src.repositories import PersonRepository
 from src.repositories import AuthRepository
 
 person_route_bp = Blueprint('api_routes', __name__)
