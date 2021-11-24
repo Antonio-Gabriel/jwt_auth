@@ -15,7 +15,7 @@ def index():
     """
 
     person_repository = PersonRepository(request_api=request)
-    response = person_repository.get_person()    
+    response = person_repository.get_person()
 
     return jsonify({"status_code": 200, "data": response})
 
@@ -41,8 +41,13 @@ def create_person():
 
 @person_route_bp.route('/auth/person', methods=['POST'])
 def auth():
+    """Authenticate person
+
+    Returns:
+        [type]: [token]
+    """
 
     auth_repository = AuthRepository(request_api=request)
-    auth_repository.auth_person()
-    
-    return jsonify({"secret_key": "app.config['SECRET_KEY']"})
+    response = auth_repository.auth_person()
+
+    return jsonify(response)
