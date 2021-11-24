@@ -1,1 +1,2 @@
 from .person_repository import PersonRepository
+from .auth_repository import AuthRepository
