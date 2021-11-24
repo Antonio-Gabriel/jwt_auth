@@ -3,10 +3,13 @@ from flask import request, jsonify, Blueprint
 from src.repositories import PersonRepository
 from src.repositories import AuthRepository
 
+from src.decorators import is_required_token
+
 person_route_bp = Blueprint('api_routes', __name__)
 
 
 @person_route_bp.route('/', methods=['GET'])
+@is_required_token
 def index():
     """Preview persons
 
@@ -51,3 +54,11 @@ def auth():
     response = auth_repository.auth_person()
 
     return jsonify(response)
+
+
+@person_route_bp.route('/persons', methods=['GET'])
+@is_required_token
+def persons():
+    """ Show persons """
+
+    return jsonify({"data": "Show Persons"})
