@@ -37,7 +37,11 @@ class AuthRepository:
         self.__connection.close()
 
         if result is None:
-            print("None")
+            return { 
+                    "error": {
+                        "msg": "User not found"
+                    } 
+                }
         else:            
-            verify_pass = SecretPassword.password_verify(str(result[0]), password)
+            verify_pass = SecretPassword.password_verify(password, result[0])
             print(verify_pass)
